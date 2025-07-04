@@ -17,7 +17,7 @@ from .schemas import (
 
 
 @customer_bp.route("/login", methods=["POST"])
-@limiter.limit("3 per 15 minutes")
+@limiter.limit("4 per 15 minutes")
 def login():
     try:
         credentials = login_schema.load(request.json)

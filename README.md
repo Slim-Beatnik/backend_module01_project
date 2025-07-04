@@ -30,58 +30,86 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/Slim-Beatnik/backend_module01_knowledge_check">
+  <a href="https://github.com/Slim-Beatnik/backend_module01_project">
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">Repair Shop DB</h3>
 
   <p align="center">
-    Blueprint:
-Create Blueprint folders for mechanic and service ticket. Each Blueprint folder should have the following:
-__init__.py: In this file you initialize the blueprint (don't forget to import the routes into this file after the initialization.)
-routes.py: Here is were you create the routes specific to that resource
-schemas.py: This is the file where you define the schemas used to serialize and deserialize data for the routes
-After initializing the the blueprints register them in your app/__init__.py file, and assign a url prefix. Remember url prefixes should be the plural name of the resource (hint: /mechanics, /service-tickets)
+If you have been following along with the practice assignments your Mechanic API should have the following.
 
-Marshmallow Schemas:
-Define basic Schemas for your mechanic and service_ticket resources. Remember you can take advantage of SQLAlchemyAutoSchema to quickly generate the schema based of the model you created for that particular resource.
+Rate Limiting and Caching:
+Using the Flask-Limiter package, have a rate limit applied to at least one route in your API
+Using the Flask-Caching package, have implemented caching on at least on route in your API
+(Additional Optional Challenge): Apply a default rate limit to your project, offering blanket protection to all routes. Feel free to dive into the Flask-Limiter docs to figure this out: https://flask-limiter.readthedocs.io/en/stable/
 
-Routes:
+Token Authentication: requires python-jose package.
+Create an encode_token function that takes in a customer_id to create a token specific to that user.
+login_schema, which can be made by excluding all fields except email and password from your CustomerSchema
+In your customer blueprint, create a login route:
+---- POST '/login' : passing in email and password, validated by login_schema
+---- After credentials have been validate utilizes the encode_token() function to make a token to be returned to that customer.
+Create @token_required wrapper, that validates the token and returns the customer_id to the function it's decorating.
+Create a route that requires a token, that returns the service_tickets related to that customer.
+---- GET '/my-tickets': requires a Bearer Token authorization.
+---- The route function should receive the customer_id from the @token_required wrapper.
+---- Using that id query the service_tickets where the customer_id is equal to the id passed in.
+Additionally add @token_required to any routes you think should require authorization. (ex: Update, Delete,...)
+(Additonal Optional Challenge): Create a login route for mechanics, which uses a separate function to encode tokens specifically for mechanics (Hint: add a field to the token payload). Additionally create another wrapper that checks the token for that field when authorizing. Apply this wrapper to relevant Mechanics and Inventory routes (What routes should a mechanic be required to be logged in for).
+Advanced Queries:
+Add an update route to your service_ticket blueprint to add and remove mechanics from a ticket.
+---- PUT '/<int:ticket_id>/edit' : Takes in remove_ids, and add_ids
+---- Use id's to look up the mechanic to append or remove them from the ticket.mechanics list
+Create an endpoint in mechanics blueprint that returns a list of mechanics in order of who has worked on the most tickets
+Apply Pagination to GET Customers route.
+Assignment Continuation:
 
-Mechanic: Create full CRUD routes for your mechanic resource, and remember you should have a url_prefix set up so a lot of your route endpoints will be '/'.
-POST '/' : Creates a new Mechanic
-GET '/': Retrieves all Mechanics
-PUT '/<int:id>':  Updates a specific Mechanic 
+Incorporating a new resource to the API, we are now going to track inventory.
 
-based on the id passed in through the url.
-DELETE '/<int:id': Deletes a specific Mechanic based on the id passed in through the url.
-Service_Ticket: Create the following routes to Create service tickets, assign mechanics, remove mechanics, and retrieve all service tickets.
-POST '/': Pass in all the required information to create the service_ticket.
-PUT '/<ticket_id>/assign-mechanic/<mechanic-id>: Adds a relationship between a service ticket and the mechanics. (Reminder: use your relationship attributes! They allow you the treat the relationship like a list, able to append a Mechanic to the mechanics list).
-PUT '/<ticket_id>/remove-mechanic/<mechanic-id>: Removes the relationship from the service ticket and the mechanic.
-GET '/': Retrieves all service tickets.
-Testing and Postman Collections:
-As you continue to build new endpoints, you should be testing each endpoint in Postman to ensure functionality. 
+Inventory Model:
+Create a new Inventory model in models.py which includes the following fields:
+id: Unique Identifier
+name: Part name
+price: float value (price of the part)
+Many-to-Many Relationship:
+Establish a many-to-many relationship from Inventory to ServiceTicket, as One ticket can require many parts, and the same kind of part can be used on many different tickets.
 
-Create a Postman collection to store all of these endpoint tests, export the collection and include it with your work. 
+The junction table does not have to support any additional fields, and can be a simple table object similar to your service_mechanic table. 
 
-If you are unsure how to create and export a Postman collect watch the video linked below.
+(Additional Optional Challenge): Make the junction table a Model object with additional field of quantity.
+
+Inventory Blueprint:
+Create a new folder in blueprints for Inventory:
+Initialize the blueprint (don't forget to import routes under the blueprint initialization)
+Register the blueprint with a url_prefix = '/inventory'
+Create a Schema for Inventory (use SQLAlchemyAutoSchema to generate schema from Inventory Model)
+Inventory Routes:
+For inventory implement basic CRUD routes to Create, Read, Update, and Delete parts stored in our inventory. 
+
+Additionally Create a route in the service_ticket blueprint to add a single part to an existing Service Ticket.
+
+Testing and Submission:
+
+Test all routes in Postman to ensure each endpoint works as designed. In Postman add every test request to a collection, and export that collection to your API project folder. Push your work to Github and submit the link to the GitHub repo.
 
 Presenting
 All students who joined Coding Temple February and onward need to present there project either on Thursdays or Friday live sessions, or you can schedule a 1-on-1 with Dylan to present.
 For Pre-February students you are still encouraged to present as it is a great way to build you Tech-Communication skills which are a must.
-Submitting:
-For this assignment and all following, please push your work to github, and submit the link to the github repository.
+
+Bonus features completed:
+@role_required decorator added. It has a role in the payload, and protects mechanic routes.
+
+
     <br />
-    <a href="https://github.com/Slim-Beatnik/backend_module01_knowledge_check"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/Slim-Beatnik/backend_module01_project"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/Slim-Beatnik/backend_module01_knowledge_check">View Demo</a>
+    <a href="https://github.com/Slim-Beatnik/backend_module01_project">View Demo</a>
     &middot;
-    <a href="https://github.com/Slim-Beatnik/backend_module01_knowledge_check/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
+    <a href="https://github.com/Slim-Beatnik/backend_module01_project/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
     &middot;
-    <a href="https://github.com/Slim-Beatnik/backend_module01_knowledge_check/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+    <a href="https://github.com/Slim-Beatnik/backend_module01_project/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
   </p>
 </div>
 
@@ -148,11 +176,11 @@ To get a local copy up and running follow these simple example steps.
 1. Get a free API Key at [https://example.com](https://example.com)
 2. Clone the repo
    ```sh
-   git clone https://github.com/Slim-Beatnik/backend_module01_knowledge_check.git
+   git clone https://github.com/Slim-Beatnik/backend_module01_project.git
    ```
 2. Change git remote url to avoid accidental pushes to base project
    ```sh
-   git remote set-url origin Slim-Beatnik/backend_module01_knowledge_check
+   git remote set-url origin Slim-Beatnik/backend_module01_project
    git remote -v # confirm the changes
    ```
 3. Create a virtual environment
@@ -173,19 +201,38 @@ To get a local copy up and running follow these simple example steps.
         uv sync
       ```
 
+  Postman setup:
+  repair_shop_db.postman_collection.json must run in the db_test_environment.postman_environment.json
+  - if you're out of free collection runs -
+  Open a terminal and input the following command and navigate to the correct directory for the project.
+  Then:
+  ```sh
+    postman collection run repair_shop_db.postman_collection.json -e db_test_environment.postman_environment.json
+  ```
+
   then use uv run app.py
 6. Bonus ********
   if you're using uv, check out ruff
   Corey Shafer Youtube video: https://www.youtube.com/watch?v=828S-DMQog8
 
 7. Verify paths in Postman:
-  import kh-ct-backend-module01_knowledge_check-repairshop_db.postman_collection.json
+  import repairshop_db.postman_collection.json
   You can then run all, or split up your run by folder.
   There is a main folder for creation:
   C___
   And another folder for read, update and delete:
   _RUD
 
+Notes:
+  several deletes are soft-deletes with intent -
+  The idea behind it also includes columns in the inventory, specifically the recalled and recallable. It's important to keep records of any recallable services to serve your customers properly, if not legally. Further, service tickets should probably be kept until the end of the current tax year.
+
+  There are also web storefront routes, /inventory/shop allows front-end to get all products for showcase or shopping purposes. They are also available by ~shop/\<id\>, or searched by ~shop/search.
+
+  Customers can look up their tickets via service_tickets/my-tickets
+  Similarly, mechanics can look their assigned tickets via service_tickets/assigned-tickets/search
+
+  Both Mechanics and Inventory objects can be associated with a service ticket with add and remove id_lists
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -205,7 +252,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 <!-- ROADMAP -->
 ## Roadmap
 
-See the [open issues](https://github.com/Slim-Beatnik/backend_module01_knowledge_check/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/Slim-Beatnik/backend_module01_project/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -229,8 +276,8 @@ Don't forget to give the project a star! Thanks again!
 
 ### Top contributors:
 
-<a href="https://github.com/Slim-Beatnik/backend_module01_knowledge_check/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=Slim-Beatnik/backend_module01_knowledge_check" alt="contrib.rocks image" />
+<a href="https://github.com/Slim-Beatnik/backend_module01_project/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Slim-Beatnik/backend_module01_project" alt="contrib.rocks image" />
 </a>
 
 
@@ -249,7 +296,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - totem64@gmail.com.com
 
-Project Link: [https://github.com/Slim-Beatnik/backend_module01_knowledge_check](https://github.com/Slim-Beatnik/backend_module01_knowledge_check)
+Project Link: [https://github.com/Slim-Beatnik/backend_module01_project](https://github.com/Slim-Beatnik/backend_module01_project)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -268,16 +315,16 @@ Project Link: [https://github.com/Slim-Beatnik/backend_module01_knowledge_check]
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/Slim-Beatnik/backend_module01_knowledge_check.svg?style=for-the-badge
-[contributors-url]: https://github.com/Slim-Beatnik/backend_module01_knowledge_check/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/Slim-Beatnik/backend_module01_knowledge_check.svg?style=for-the-badge
-[forks-url]: https://github.com/Slim-Beatnik/backend_module01_knowledge_check/network/members
-[stars-shield]: https://img.shields.io/github/stars/Slim-Beatnik/backend_module01_knowledge_check.svg?style=for-the-badge
-[stars-url]: https://github.com/Slim-Beatnik/backend_module01_knowledge_check/stargazers
-[issues-shield]: https://img.shields.io/github/issues/Slim-Beatnik/backend_module01_knowledge_check.svg?style=for-the-badge
-[issues-url]: https://github.com/Slim-Beatnik/backend_module01_knowledge_check/issues
-[license-shield]: https://img.shields.io/github/license/Slim-Beatnik/backend_module01_knowledge_check.svg?style=for-the-badge
-[license-url]: https://github.com/Slim-Beatnik/backend_module01_knowledge_check/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/Slim-Beatnik/backend_module01_project.svg?style=for-the-badge
+[contributors-url]: https://github.com/Slim-Beatnik/backend_module01_project/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/Slim-Beatnik/backend_module01_project.svg?style=for-the-badge
+[forks-url]: https://github.com/Slim-Beatnik/backend_module01_project/network/members
+[stars-shield]: https://img.shields.io/github/stars/Slim-Beatnik/backend_module01_project.svg?style=for-the-badge
+[stars-url]: https://github.com/Slim-Beatnik/backend_module01_project/stargazers
+[issues-shield]: https://img.shields.io/github/issues/Slim-Beatnik/backend_module01_project.svg?style=for-the-badge
+[issues-url]: https://github.com/Slim-Beatnik/backend_module01_project/issues
+[license-shield]: https://img.shields.io/github/license/Slim-Beatnik/backend_module01_project.svg?style=for-the-badge
+[license-url]: https://github.com/Slim-Beatnik/backend_module01_project/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/3dkylehill
 [product-screenshot]: images/screenshot.png

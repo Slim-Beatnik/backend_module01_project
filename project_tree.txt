@@ -23,6 +23,10 @@
     |   |   |   schemas.py
     |   |   |   __init__.py
     |   |
+    |   +---\inventory
+    |   |   |   routes.py
+    |   |   |   schemas.py
+    |   |   |   __init__.py
     |   |           
     |   +---\mechanics
     |   |   |   routes.py
